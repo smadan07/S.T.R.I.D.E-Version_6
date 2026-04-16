@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>S.T.R.I.D.E. 4.0 — System Diagrams</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:        #080e1b;
+      --card:      #0f1927;
+      --border:    #1a2e4a;
+      --green:     #00ff9d;
+      --green-dim: #00c47a;
+      --red:       #ff3b5c;
+      --yellow:    #ffb800;
+      --blue:      #3b82f6;
+      --text:      #e2e8f0;
+      --muted:     #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      padding: 0;
+    }
+
+    /* ── NAV ─────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(8,14,27,0.95);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 56px;
+    }
+    .nav-brand {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--green);
+      letter-spacing: 2px;
+    }
+    .nav-links { display: flex; gap: 4px; }
+    .nav-links a {
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      transition: all .2s;
+    }
+    .nav-links a:hover { background: rgba(0,255,157,.08); color: var(--green); }
+
+    /* ── SECTIONS ─────────────────────────────────────── */
+    section {
+      min-height: 100vh;
+      padding: 96px 48px 64px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--green);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+      letter-spacing: -1px;
+    }
+    .section-desc {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 40px;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    /* ── COVER ────────────────────────────────────────── */
+    #cover {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: radial-gradient(ellipse at 50% 40%, rgba(0,255,157,.06) 0%, transparent 70%);
+    }
+    .cover-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--green);
+      border: 1px solid rgba(0,255,157,.3);
+      padding: 6px 20px;
+      border-radius: 20px;
+      margin-bottom: 32px;
+    }
+    .cover-title {
+      font-size: 88px;
+      font-weight: 700;
+      letter-spacing: -4px;
+      background: linear-gradient(135deg, var(--green) 0%, #00b4d8 55%, var(--green-dim) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .cover-sub  { font-size: 18px; color: var(--muted); margin-bottom: 6px; }
+    .cover-sub2 { font-size: 13px; color: #334155; margin-bottom: 48px; }
+    .cover-tagline {
+      font-size: 16px;
+      font-style: italic;
+      color: var(--green-dim);
+      padding: 20px 36px;
+      border-left: 3px solid var(--green);
+      text-align: left;
+      max-width: 520px;
+      line-height: 1.7;
+    }
+    .cover-tagline strong { color: var(--green); }
+    .pulse {
+      width: 100px; height: 100px;
+      border: 1.5px solid var(--green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 40px;
+      font-size: 44px;
+      position: relative;
+    }
+    .pulse::before {
+      content: '';
+      position: absolute;
+      width: 140px; height: 140px;
+      border: 1px solid rgba(0,255,157,.15);
+      border-radius: 50%;
+    }
+    .pulse::after {
+      content: '';
+      position: absolute;
+      width: 70px; height: 70px;
+      border: 1px solid rgba(0,255,157,.25);
+      border-radius: 50%;
+    }
+    .scroll-hint {
+      margin-top: 56px;
+      font-size: 12px;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+
+    /* ── CARDS ────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 32px;
+      margin-bottom: 28px;
+    }
+    .card-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--green);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-title::before {
+      content: '';
+      display: block;
+      width: 3px;
+      height: 14px;
+      background: var(--green);
+      border-radius: 2px;
+    }
+    .mermaid { display: flex; justify-content: center; }
+
+    /* ── LAYERS ───────────────────────────────────────── */
+    .layer-stack { display: flex; flex-direction: column; gap: 14px; }
+    .layer {
+      border-radius: 10px;
+      padding: 22px 26px;
+      display: flex;
+      align-items: flex-start;
+      gap: 22px;
+    }
+    .l1 { background:rgba(59,130,246,.08); border:1px solid rgba(59,130,246,.25); }
+    .l2 { background:rgba(0,255,157,.06);  border:1px solid rgba(0,255,157,.2);  }
+    .l3 { background:rgba(168,85,247,.06); border:1px solid rgba(168,85,247,.2); }
+    .layer-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 32px;
+      font-weight: 700;
+      min-width: 52px;
+      line-height: 1;
+    }
+    .c1{color:#3b82f6} .c2{color:var(--green)} .c3{color:#a855f7}
+    .layer-body h4 { font-size: 15px; font-weight: 700; margin-bottom: 7px; }
+    .layer-body p  { font-size: 13px; color: var(--muted); line-height: 1.65; }
+    .layer-body code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      background: rgba(255,255,255,.05);
+      padding: 2px 7px;
+      border-radius: 3px;
+      color: var(--green);
+    }
+    .arrow-down { text-align:center; color:var(--muted); font-size:22px; line-height:1; }
+    .sandbox-box {
+      text-align: center;
+      padding: 18px;
+      background: rgba(255,59,92,.1);
+      border: 1px solid rgba(255,59,92,.3);
+      border-radius: 10px;
+      color: var(--red);
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 2px;
+    }
+
+    /* ── FEATURES ─────────────────────────────────────── */
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .feat-card {
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+    }
+    .feat-icon { font-size: 26px; margin-bottom: 10px; }
+    .feat-name { font-size: 13px; font-weight: 600; color: var(--green); margin-bottom: 5px; }
+    .feat-desc { font-size: 11px; color: var(--muted); line-height: 1.55; }
+    .feat-badge {
+      margin-top: 10px;
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .real  { background:rgba(0,255,157,.1); color:var(--green); }
+    .synth { background:rgba(255,184,0,.1); color:var(--yellow); }
+
+    /* ── RISK ─────────────────────────────────────────── */
+    .risk-bar {
+      display: flex;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 64px;
+      margin: 24px 0;
+    }
+    .risk-seg {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .risk-seg .rl { font-size: 11px; font-weight: 700; letter-spacing: 1px; }
+    .risk-seg .rr { font-size: 10px; opacity: .65; }
+    .rs-g { flex:36; background:rgba(0,255,157,.12); border:1px solid rgba(0,255,157,.25); color:var(--green); }
+    .rs-y { flex:34; background:rgba(255,184,0,.12);  border:1px solid rgba(255,184,0,.25);  color:var(--yellow); }
+    .rs-r { flex:30; background:rgba(255,59,92,.12);  border:1px solid rgba(255,59,92,.25);  color:var(--red); }
+
+    .score-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:24px; }
+    .score-card {
+      background: rgba(255,255,255,.03);
+      border-radius: 10px;
+      padding: 20px;
+      border-left: 3px solid var(--border);
+    }
+    .score-card.up   { border-color: var(--red); }
+    .score-card.down { border-color: var(--green); }
+    .score-card h4 {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .score-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+      font-size: 13px;
+    }
+    .score-row:last-child { border: none; }
+    .val { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+    .vr { color:var(--red); } .vg { color:var(--green); }
+
+    /* ── FOOTER ───────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 32px;
+      color: var(--muted);
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 1px;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">S.T.R.I.D.E. 4.0</div>
+  <div class="nav-links">
+    <a href="#cover">Cover</a>
+    <a href="#arch">Architecture</a>
+    <a href="#layers">Layers</a>
+    <a href="#ml">ML Pipeline</a>
+    <a href="#risk">Risk Score</a>
+    <a href="#ae">Autoencoder</a>
+  </div>
+</nav>
+
+<!-- ═══════════════ COVER ════════════════════════════ -->
+<section id="cover">
+  <div class="pulse">🛡️</div>
+  <div class="cover-badge">Technical Architecture · Hackathon Presentation</div>
+  <div class="cover-title">S.T.R.I.D.E.</div>
+  <p class="cover-sub">Swift Trust &amp; Real-time Identity Dynamics Engine</p>
+  <p class="cover-sub2">Dense Autoencoder &nbsp;·&nbsp; WebGL Hardware Fingerprinting &nbsp;·&nbsp; Geovelocity Detection</p>
+  <div class="cover-tagline">
+    "Every system today authenticates at the door.<br/>
+    <strong>STRIDE guards the entire hallway.</strong>"
+  </div>
+  <div class="scroll-hint">↓ &nbsp; scroll to explore diagrams</div>
+</section>
+
+<!-- ═══════════════ ARCH ══════════════════════════════ -->
+<section id="arch">
+  <div class="section-label">Diagram 01</div>
+  <div class="section-title">Full System Architecture</div>
+  <div class="section-desc">End-to-end data flow from the stealth browser agent to the FastAPI backend to the real-time UI dashboard.</div>
+
+  <div class="card">
+    <div class="card-title">Data Flow — Browser → Backend → UI</div>
+    <div class="mermaid">
+flowchart TD
+    subgraph BROWSER["🖥️  BROWSER — sensor.js  (Stealth Agent, invisible to user)"]
+        KB["⌨️ Keystroke Listener\nhold_times · flight_times"]
+        MS["🖱️ Mouse Tracker\nmouse_dist · acceleration"]
+        WG["🎮 WebGL Fingerprint\nGPU renders triangle → cyrb53 hash"]
+        PL["📦 Payload Builder\nBundles 6 features every 1 second"]
+        KB --> PL
+        MS --> PL
+        WG --> PL
+    end
+
+    subgraph BACKEND["⚙️  BACKEND — FastAPI + TensorFlow  (Python)"]
+        FE["📐 Feature Engineering\nmean_hold · std_hold · mean_flight · std_flight · mouse_dist · error_rate"]
+        subgraph LAYERS["  Three Parallel Security Layers  "]
+            L1["🧠 Layer 1 — Dense Autoencoder\nMSE > personal_threshold → anomaly"]
+            L2["🔒 Layer 2 — WebGL Invariant\ngpu_hash mismatch → session hijack"]
+            L3["🌍 Layer 3 — Geovelocity Engine\nspeed > 1000 km/h → impossible travel"]
+        end
+        RS["🎯 Risk Score Engine  →  SEAMLESS / MFA CHALLENGE / SANDBOXED"]
+        FE --> L1
+        FE --> L2
+        FE --> L3
+        L1 --> RS
+        L2 --> RS
+        L3 --> RS
+    end
+
+    subgraph UI["📊  UI — Real-time Dashboard"]
+        SM["STATE indicator + RISK SCORE gauge"]
+        XAI["XAI Reasoning Log — explains every decision in plain English"]
+    end
+
+    PL -->|"POST /telemetry  every 1 second"| FE
+    RS -->|"JSON response"| SM
+    RS --> XAI
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ LAYERS ═════════════════════════════ -->
+<section id="layers">
+  <div class="section-label">Diagram 02</div>
+  <div class="section-title">Three-Layer Defense Stack</div>
+  <div class="section-desc">Three independent security checks run in parallel on every telemetry tick. Any single layer confirming an attack triggers instant permanent lockdown.</div>
+
+  <div class="card">
+    <div class="card-title">Defense Architecture — Three Orthogonal Dimensions of Identity</div>
+    <div class="layer-stack">
+
+      <div class="layer l1">
+        <div class="layer-num c1">01</div>
+        <div class="layer-body">
+          <h4>Behavioral ML — Dense Autoencoder</h4>
+          <p>
+            Trained on <strong>20,400 real keystroke samples</strong> from the CMU Keystroke Dynamics Benchmark (51 subjects × 400 attempts).
+            Learns your typing rhythm in 5 seconds and flags anything it cannot reconstruct.<br/><br/>
+            Detection signal: <code>MSE > personal_threshold</code> → behavioral anomaly detected<br/>
+            Catches: Credential theft · account sharing · bots · scripted replay attacks
+          </p>
+        </div>
+      </div>
+
+      <div class="arrow-down">↓ &nbsp;&nbsp; parallel &nbsp;&nbsp; ↓</div>
+
+      <div class="layer l2">
+        <div class="layer-num c2">02</div>
+        <div class="layer-body">
+          <h4>WebGL Hardware Fingerprint</h4>
+          <p>
+            Every GPU renders a WebGL triangle differently at the hardware level due to differences in anti-aliasing, floating-point precision, and color interpolation.
+            The pixel output is hashed using <code>cyrb53</code> and stored on first connection.<br/><br/>
+            Detection signal: <code>incoming gpu_hash ≠ baseline gpu_hash</code> → different physical machine detected<br/>
+            Catches: Session cookie theft · token replay attacks · machine-in-the-middle
+          </p>
+        </div>
+      </div>
+
+      <div class="arrow-down">↓ &nbsp;&nbsp; parallel &nbsp;&nbsp; ↓</div>
+
+      <div class="layer l3">
+        <div class="layer-num c3">03</div>
+        <div class="layer-body">
+          <h4>Geovelocity Engine</h4>
+          <p>
+            Calculates the great-circle distance between consecutive IP addresses using the <strong>Haversine formula</strong>.
+            Divides by elapsed time to derive implied travel speed. ASN check also flags datacenter and proxy IPs.<br/><br/>
+            Detection signal: <code>speed > 1,000 km/h</code> → physically impossible travel<br/>
+            Catches: VPN abuse · proxy tunneling · hijacked accounts accessed from remote locations
+          </p>
+        </div>
+      </div>
+
+      <div class="arrow-down">↓</div>
+
+      <div class="sandbox-box">🔒 &nbsp;&nbsp; ANY LAYER FIRES → +100 RISK → SESSION PERMANENTLY SANDBOXED &nbsp;&nbsp; 🔒</div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ ML ═════════════════════════════════ -->
+<section id="ml">
+  <div class="section-label">Diagram 03</div>
+  <div class="section-title">ML Training Pipeline</div>
+  <div class="section-desc">From raw CMU keystroke data to a live, calibrated, per-user anomaly detection model.</div>
+
+  <div class="card">
+    <div class="card-title">Training Pipeline — CMU Data → Deployed Model</div>
+    <div class="mermaid">
+flowchart LR
+    CMU["📁 CMU Dataset\n51 subjects\n400 attempts\n= 20,400 samples"]
+    FE["🔧 Feature Engineering\n11 hold columns\n10 flight columns\nmean + std per row"]
+    SYN["⚗️ Synthesis\nmouse_dist\nerror_rate\ncorrelated to speed"]
+    NORM["📏 StandardScaler\nAll 6 features\nmean=0,  std=1"]
+    AE["🧠 Dense Autoencoder\n6→32→16→8→16→32→6\nInput = Target = X\n20 epochs · Adam · MSE"]
+    TH["🎯 95th Percentile\nThreshold\n= 0.000468"]
+    SAVE["💾 stride_cnn.keras\nstride_config.pkl\n(scaler + threshold)"]
+    CMU --> FE --> SYN --> NORM --> AE --> TH --> SAVE
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Six Behavioral Features</div>
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon">⏱️</div>
+        <div class="feat-name">mean_hold</div>
+        <div class="feat-desc">Average duration each key is pressed. Reflects typing speed and confidence. Slow typists hold longer.</div>
+        <span class="feat-badge real">✓ Real CMU data</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📊</div>
+        <div class="feat-name">std_hold</div>
+        <div class="feat-desc">Consistency of hold times. A 10-year typist is metronomic (low std). An attacker under pressure is erratic (high std).</div>
+        <span class="feat-badge real">✓ Real CMU data</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">✈️</div>
+        <div class="feat-name">mean_flight</div>
+        <div class="feat-desc">Average gap between releasing one key and pressing the next. The primary typing speed signal.</div>
+        <span class="feat-badge real">✓ Real CMU data</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🎵</div>
+        <div class="feat-name">std_flight</div>
+        <div class="feat-desc">Rhythm regularity across key transitions. Subconcious and nearly impossible to fake at typing speed.</div>
+        <span class="feat-badge real">✓ Real CMU data</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🖱️</div>
+        <div class="feat-name">mouse_dist</div>
+        <div class="feat-desc">Total pixel distance traveled per second. Captures motor control range and cursor habits.</div>
+        <span class="feat-badge synth">~ Synthesized (live)</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">⌫</div>
+        <div class="feat-name">error_rate</div>
+        <div class="feat-desc">Backspace frequency. Reflects typing confidence and cognitive load. Spikes under stress or unfamiliarity.</div>
+        <span class="feat-badge synth">~ Synthesized (live)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ RISK ════════════════════════════════ -->
+<section id="risk">
+  <div class="section-label">Diagram 04</div>
+  <div class="section-title">Risk Score State Machine</div>
+  <div class="section-desc">A single 0–100 score updated every second. Three zones. One irreversible terminal state.</div>
+
+  <div class="card">
+    <div class="card-title">State Zones</div>
+    <div class="risk-bar">
+      <div class="risk-seg rs-g"><span class="rl">SEAMLESS</span><span class="rr">0 – 35</span></div>
+      <div class="risk-seg rs-y"><span class="rl">MFA CHALLENGE</span><span class="rr">36 – 69</span></div>
+      <div class="risk-seg rs-r"><span class="rl">SANDBOXED</span><span class="rr">70 – 100</span></div>
+    </div>
+    <div class="score-grid">
+      <div class="score-card up">
+        <h4>⬆ Score Increases — Threat Events</h4>
+        <div class="score-row"><span>Behavioral anomaly (per 1-second tick)</span><span class="val vr">+5 to +15</span></div>
+        <div class="score-row"><span>WebGL hardware fingerprint mismatch</span><span class="val vr">+100 instant</span></div>
+        <div class="score-row"><span>Impossible travel speed detected</span><span class="val vr">+100 instant</span></div>
+        <div class="score-row"><span>Datacenter / proxy IP detected</span><span class="val vr">+100 instant</span></div>
+      </div>
+      <div class="score-card down">
+        <h4>⬇ Score Decreases — Clean Ticks</h4>
+        <div class="score-row"><span>Clean tick (MSE below personal threshold)</span><span class="val vg">−6 per tick</span></div>
+        <div class="score-row"><span>Score floor</span><span class="val vg">min 0</span></div>
+        <div class="score-row"><span>Once sandboxed</span><span class="val vr">locked at 100</span></div>
+        <div class="score-row" style="color:var(--muted);font-size:12px;padding-top:10px;">Recovery intentionally slower than attack. 12 clean ticks to reverse 5 bad ones. Irreversible latch prevents pause-and-wait bypass.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">State Transition Diagram</div>
+    <div class="mermaid">
+stateDiagram-v2
+    direction LR
+    [*] --> Calibrating : New session created
+    Calibrating --> SEAMLESS : 5 ticks complete\npersonal threshold set
+
+    SEAMLESS --> SEAMLESS : Clean tick\nrisk − 6
+
+    SEAMLESS --> MFA_CHALLENGE : risk ≥ 36\nbehavioral drift detected
+
+    MFA_CHALLENGE --> SEAMLESS : Multiple clean ticks\nrisk drops below 36
+
+    MFA_CHALLENGE --> SANDBOXED : risk ≥ 70
+
+    SEAMLESS --> SANDBOXED : Hardware mismatch\nOR impossible travel\n+100 instant
+
+    SANDBOXED --> [*] : Permanent lock\nnew login required\nno recovery possible
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ AE ═════════════════════════════════ -->
+<section id="ae">
+  <div class="section-label">Diagram 05</div>
+  <div class="section-title">Dense Autoencoder Architecture</div>
+  <div class="section-desc">The neural network learns to compress and reconstruct normal human behavioral data. Anything it cannot reconstruct is flagged as anomalous.</div>
+
+  <div class="card">
+    <div class="card-title">Network Topology — Encoder / Bottleneck / Decoder</div>
+    <div class="mermaid">
+flowchart LR
+    IN["INPUT\n6 features\n─────\nmean_hold\nstd_hold\nmean_flight\nstd_flight\nmouse_dist\nerror_rate"]
+
+    subgraph ENC["ENCODER — Compress"]
+      E1["Dense 32\nReLU"]
+      E2["Dense 16\nReLU"]
+    end
+
+    BN["BOTTLENECK\n8 neurons\nLatent space\nlearned representation"]
+
+    subgraph DEC["DECODER — Rebuild"]
+      D1["Dense 16\nReLU"]
+      D2["Dense 32\nReLU"]
+    end
+
+    OUT["OUTPUT\n6 features\n─────\nreconstructed\nbehavioral\nvector"]
+
+    MSE["MSE\noriginal vs reconstructed\n─────\nif MSE > threshold\n→ ANOMALY FLAGGED"]
+
+    IN --> E1 --> E2 --> BN --> D1 --> D2 --> OUT --> MSE
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Calibration &amp; Online Learning Flow</div>
+    <div class="mermaid">
+flowchart TD
+    START["New session\nClone global model\nthreshold = 0.000468"]
+    CAL{"calibration\nsamples < 5?"}
+    FT["Fine-tune  epochs=2\nExpand threshold if needed\nthreshold = max_mse × 1.5\nrisk stays 0"]
+    INC["calibration_samples + 1"]
+    DET{"MSE vs\npersonal\nthreshold"}
+    UP["risk += penalty\n5 to 15 per tick"]
+    DOWN["risk −= 6\nIf MSE in safe zone:\nfine-tune 1 epoch\n(online learning)"]
+    LATCH{"risk ≥ 70?"}
+    SANDBOX["SANDBOXED\nPermanent lock"]
+
+    START --> CAL
+    CAL -->|Yes| FT --> INC --> CAL
+    CAL -->|No| DET
+    DET -->|above threshold| UP --> LATCH
+    DET -->|below threshold| DOWN --> LATCH
+    LATCH -->|Yes| SANDBOX
+    LATCH -->|No| DET
+    </div>
+  </div>
+</section>
+
+<footer>S.T.R.I.D.E. 4.0 &nbsp;·&nbsp; Confidential Hackathon Submission &nbsp;·&nbsp; All diagrams generated from live codebase</footer>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      primaryColor:          '#0f1927',
+      primaryTextColor:      '#e2e8f0',
+      primaryBorderColor:    '#1a2e4a',
+      lineColor:             '#00ff9d',
+      secondaryColor:        '#0f1927',
+      tertiaryColor:         '#1e2a3a',
+      background:            '#080e1b',
+      mainBkg:               '#0f1927',
+      nodeBorder:            '#1a2e4a',
+      clusterBkg:            '#0a1420',
+      titleColor:            '#e2e8f0',
+      edgeLabelBackground:   '#0f1927',
+      fontFamily:            'Inter, sans-serif',
+      fontSize:              '13px'
+    }
+  });
+</script>
+</body>
+</html>
